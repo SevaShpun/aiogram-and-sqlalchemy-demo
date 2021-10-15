@@ -30,17 +30,17 @@ async def main():
 
     config: Config = load_config()
     engine = create_async_engine(
-        f"postgresql+asyncpg://{config.db.user}:{config.db.password}@{config.db.host}/{config.db.db_name}",
+        f"sqlite+aiosqlite:///{config.db.db_name}",
+        echo=True,
         future=True
     )
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
     # expire_on_commit=False will prevent attributes from being expired
     # after commit.
-    async_sessionmaker = sessionmaker(
-        engine, expire_on_commit=False, class_=AsyncSession
-    )
+    async_sessionmaker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     bot = Bot(config.bot.token, parse_mode="HTML")
     bot["db"] = async_sessionmaker
     dp = Dispatcher(bot)
