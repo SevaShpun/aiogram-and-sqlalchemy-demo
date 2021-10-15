@@ -1,5 +1,5 @@
+import json
 from dataclasses import dataclass
-from os import getenv
 
 
 @dataclass
@@ -21,14 +21,19 @@ class Config:
     db: DB
 
 
+def get_settings(k):
+    with open('settings.json', 'r', encoding='utf-8') as f:
+        return json.loads(f.read()).get(k)
+
+
 def load_config():
     # TODO: Add some checks here?
     return Config(
-        bot=Bot(token=getenv("BOT_TOKEN")),
+        bot=Bot(token=get_settings("BOT_TOKEN")),
         db=DB(
-            host=getenv("DB_HOST"),
-            db_name=getenv("DB_NAME"),
-            user=getenv("DB_USER"),
-            password=getenv("DB_PASS")
+            host=get_settings("DB_HOST"),
+            db_name=get_settings("DB_NAME"),
+            user=get_settings("DB_USER"),
+            password=get_settings("DB_PASS")
         )
     )
