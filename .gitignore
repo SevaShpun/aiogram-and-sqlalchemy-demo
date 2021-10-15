@@ -2,3 +2,4 @@ venv/
 .idea/
 /docker-compose.yml
 /.env
+settings.json
